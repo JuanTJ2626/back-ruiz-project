@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class CategoriaController {
     private final CategoriaService categoriaService;
 
     @GetMapping("/negocio/{negocioId}")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
     @Operation(summary = "Listar categorías de un negocio")
     @ApiResponse(responseCode = "200", description = "Lista de categorías del negocio")
     public ResponseEntity<List<CategoriaDTO>> obtenerPorNegocio(
@@ -32,21 +34,22 @@ public class CategoriaController {
     }
 
     @PostMapping
-    @Operation(summary = "Crear categoría", description = "Crea una nueva categoría asociada a un negocio")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Crear categoría", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Categoría creada"),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-        @ApiResponse(responseCode = "404", description = "Negocio no encontrado")
+        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede crear categorías")
     })
     public ResponseEntity<CategoriaDTO> crear(@Valid @RequestBody CategoriaDTO request) {
         return new ResponseEntity<>(categoriaService.crear(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar categoría")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Actualizar categoría", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Categoría actualizada"),
-        @ApiResponse(responseCode = "404", description = "Categoría no encontrada")
+        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede editar categorías")
     })
     public ResponseEntity<CategoriaDTO> actualizar(
             @Parameter(description = "ID de la categoría") @PathVariable Long id,
@@ -55,10 +58,11 @@ public class CategoriaController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar categoría")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Eliminar categoría", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Categoría eliminada"),
-        @ApiResponse(responseCode = "404", description = "Categoría no encontrada")
+        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede eliminar categorías")
     })
     public ResponseEntity<Void> eliminar(
             @Parameter(description = "ID de la categoría") @PathVariable Long id) {

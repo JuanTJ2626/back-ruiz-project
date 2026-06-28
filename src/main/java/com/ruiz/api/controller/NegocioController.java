@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +26,8 @@ public class NegocioController {
     private final NegocioService negocioService;
 
     @GetMapping("/usuario/{usuarioId}")
-    @Operation(summary = "Listar negocios de un usuario", description = "Soporta multi-negocio: retorna todos los negocios asociados al usuario")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @Operation(summary = "Listar negocios de un usuario")
     @ApiResponse(responseCode = "200", description = "Lista de negocios del usuario")
     public ResponseEntity<List<NegocioResponse>> obtenerPorUsuario(
             @Parameter(description = "ID del usuario") @PathVariable Long usuarioId) {
@@ -33,6 +35,7 @@ public class NegocioController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
     @Operation(summary = "Obtener negocio por ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Negocio encontrado"),
@@ -44,14 +47,11 @@ public class NegocioController {
     }
 
     @PostMapping("/usuario/{usuarioId}")
-    @Operation(
-        summary = "Crear nuevo negocio",
-        description = "Crea un negocio adicional para el usuario. Un usuario puede tener múltiples negocios."
-    )
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Crear nuevo negocio", description = "Solo ADMIN puede crear negocios")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Negocio creado"),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede crear negocios")
     })
     public ResponseEntity<NegocioResponse> crear(
             @Parameter(description = "ID del usuario dueño") @PathVariable Long usuarioId,
@@ -60,10 +60,11 @@ public class NegocioController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar negocio")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Actualizar negocio", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Negocio actualizado"),
-        @ApiResponse(responseCode = "404", description = "Negocio no encontrado")
+        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede editar negocios")
     })
     public ResponseEntity<NegocioResponse> actualizar(
             @Parameter(description = "ID del negocio") @PathVariable Long id,
@@ -72,10 +73,11 @@ public class NegocioController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar negocio", description = "Elimina el negocio y todos sus datos asociados")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Eliminar negocio", description = "Solo ADMIN puede eliminar negocios")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Negocio eliminado"),
-        @ApiResponse(responseCode = "404", description = "Negocio no encontrado")
+        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede eliminar negocios")
     })
     public ResponseEntity<Void> eliminar(
             @Parameter(description = "ID del negocio") @PathVariable Long id) {

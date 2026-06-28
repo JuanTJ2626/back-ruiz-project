@@ -22,6 +22,7 @@ public class DashboardResponse {
     // Alertas
     private Integer productosStockCritico;      // stock <= stockMinimo
     private Integer productosAgotados;           // stock == 0
+    private Long pedidosPendientes;              // pedidos a proveedores sin recibir
 
     // Listas detalladas
     private List<ProductoResponse> productosBajoStock;

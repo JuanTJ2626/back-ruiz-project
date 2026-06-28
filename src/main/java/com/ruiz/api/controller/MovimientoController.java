@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,14 +25,17 @@ public class MovimientoController {
 
     private final MovimientoService movimientoService;
 
+    // EMPLEADO y ADMIN pueden registrar movimientos (su función principal)
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
     @Operation(
         summary = "Registrar movimiento",
-        description = "Registra una ENTRADA (suma stock), SALIDA (resta stock) o AJUSTE (fija stock al valor dado). Actualiza el stock del producto automáticamente."
+        description = "ADMIN y EMPLEADO pueden registrar movimientos. " +
+                      "ENTRADA suma stock, SALIDA resta stock, AJUSTE fija el stock al valor dado."
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Movimiento registrado y stock actualizado"),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos o stock insuficiente para la salida"),
+        @ApiResponse(responseCode = "400", description = "Stock insuficiente o datos inválidos"),
         @ApiResponse(responseCode = "404", description = "Producto o usuario no encontrado")
     })
     public ResponseEntity<MovimientoResponse> registrar(@Valid @RequestBody MovimientoRequest request) {
@@ -39,6 +43,7 @@ public class MovimientoController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
     @Operation(summary = "Obtener movimiento por ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Movimiento encontrado"),
@@ -50,10 +55,8 @@ public class MovimientoController {
     }
 
     @GetMapping("/producto/{productoId}")
-    @Operation(
-        summary = "Historial de movimientos de un producto",
-        description = "Devuelve todos los movimientos del producto ordenados del más reciente al más antiguo"
-    )
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @Operation(summary = "Historial de movimientos de un producto")
     @ApiResponse(responseCode = "200", description = "Historial obtenido correctamente")
     public ResponseEntity<List<MovimientoResponse>> obtenerPorProducto(
             @Parameter(description = "ID del producto") @PathVariable Long productoId) {
@@ -61,14 +64,11 @@ public class MovimientoController {
     }
 
     @GetMapping("/negocio/{negocioId}")
-    @Operation(
-        summary = "Últimos movimientos de un negocio",
-        description = "Devuelve los últimos movimientos de todos los productos del negocio (máx. 50)"
-    )
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @Operation(summary = "Últimos movimientos de un negocio")
     @ApiResponse(responseCode = "200", description = "Movimientos obtenidos correctamente")
     public ResponseEntity<List<MovimientoResponse>> obtenerUltimosPorNegocio(
             @Parameter(description = "ID del negocio") @PathVariable Long negocioId,
-            @Parameter(description = "Número máximo de resultados (default: 20)")
             @RequestParam(defaultValue = "20") int limite) {
         return ResponseEntity.ok(movimientoService.obtenerUltimosPorNegocio(negocioId, limite));
     }

@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class ProveedorController {
     private final ProveedorService proveedorService;
 
     @GetMapping("/negocio/{negocioId}")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
     @Operation(summary = "Listar proveedores por negocio")
     @ApiResponse(responseCode = "200", description = "Lista de proveedores del negocio")
     public ResponseEntity<List<ProveedorResponse>> obtenerPorNegocio(
@@ -33,6 +35,7 @@ public class ProveedorController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
     @Operation(summary = "Obtener proveedor por ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Proveedor encontrado"),
@@ -44,21 +47,22 @@ public class ProveedorController {
     }
 
     @PostMapping
-    @Operation(summary = "Crear proveedor", description = "Registra un nuevo proveedor para un negocio")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Crear proveedor", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Proveedor creado"),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-        @ApiResponse(responseCode = "404", description = "Negocio no encontrado")
+        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede crear proveedores")
     })
     public ResponseEntity<ProveedorResponse> crear(@Valid @RequestBody ProveedorRequest request) {
         return new ResponseEntity<>(proveedorService.crear(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar proveedor")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Actualizar proveedor", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Proveedor actualizado"),
-        @ApiResponse(responseCode = "404", description = "Proveedor no encontrado")
+        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede editar proveedores")
     })
     public ResponseEntity<ProveedorResponse> actualizar(
             @Parameter(description = "ID del proveedor") @PathVariable Long id,
@@ -67,10 +71,11 @@ public class ProveedorController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar proveedor")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Eliminar proveedor", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Proveedor eliminado"),
-        @ApiResponse(responseCode = "404", description = "Proveedor no encontrado")
+        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede eliminar proveedores")
     })
     public ResponseEntity<Void> eliminar(
             @Parameter(description = "ID del proveedor") @PathVariable Long id) {
@@ -79,23 +84,22 @@ public class ProveedorController {
     }
 
     @PostMapping("/{proveedorId}/producto/{productoId}")
-    @Operation(
-        summary = "Vincular proveedor con producto",
-        description = "Asocia un proveedor existente con un producto (relación N:M)"
-    )
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Vincular proveedor con producto", description = "Solo ADMIN")
     @ApiResponse(responseCode = "200", description = "Vínculo creado")
     public ResponseEntity<ProveedorResponse> vincularProducto(
-            @Parameter(description = "ID del proveedor") @PathVariable Long proveedorId,
-            @Parameter(description = "ID del producto") @PathVariable Long productoId) {
+            @PathVariable Long proveedorId,
+            @PathVariable Long productoId) {
         return ResponseEntity.ok(proveedorService.vincularProducto(proveedorId, productoId));
     }
 
     @DeleteMapping("/{proveedorId}/producto/{productoId}")
-    @Operation(summary = "Desvincular proveedor de producto")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Desvincular proveedor de producto", description = "Solo ADMIN")
     @ApiResponse(responseCode = "200", description = "Vínculo eliminado")
     public ResponseEntity<ProveedorResponse> desvincularProducto(
-            @Parameter(description = "ID del proveedor") @PathVariable Long proveedorId,
-            @Parameter(description = "ID del producto") @PathVariable Long productoId) {
+            @PathVariable Long proveedorId,
+            @PathVariable Long productoId) {
         return ResponseEntity.ok(proveedorService.desvincularProducto(proveedorId, productoId));
     }
 }

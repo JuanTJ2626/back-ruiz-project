@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,16 +25,19 @@ public class ProductoController {
 
     private final ProductoService productoService;
 
+    // ── Lecturas: ADMIN y EMPLEADO ────────────────────────────────────────────
+
     @GetMapping
-    @Operation(summary = "Listar todos los productos", description = "Retorna la lista completa de productos registrados")
-    @ApiResponse(responseCode = "200", description = "Lista de productos obtenida exitosamente")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @Operation(summary = "Listar todos los productos")
+    @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente")
     public ResponseEntity<List<ProductoResponse>> obtenerTodos() {
-        List<ProductoResponse> productos = productoService.obtenerTodos();
-        return ResponseEntity.ok(productos);
+        return ResponseEntity.ok(productoService.obtenerTodos());
     }
 
     @GetMapping("/negocio/{negocioId}")
-    @Operation(summary = "Listar productos por negocio", description = "Retorna todos los productos de un negocio específico")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @Operation(summary = "Listar productos por negocio")
     @ApiResponse(responseCode = "200", description = "Lista de productos del negocio")
     public ResponseEntity<List<ProductoResponse>> obtenerPorNegocio(
             @Parameter(description = "ID del negocio") @PathVariable Long negocioId) {
@@ -41,7 +45,8 @@ public class ProductoController {
     }
 
     @GetMapping("/bajo-stock/{negocioId}")
-    @Operation(summary = "Productos con stock crítico", description = "Retorna productos cuyo stock actual es menor o igual al stock mínimo")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @Operation(summary = "Productos con stock crítico")
     @ApiResponse(responseCode = "200", description = "Lista de productos con stock bajo")
     public ResponseEntity<List<ProductoResponse>> obtenerBajoStock(
             @Parameter(description = "ID del negocio") @PathVariable Long negocioId) {
@@ -49,77 +54,81 @@ public class ProductoController {
     }
 
     @GetMapping("/categoria/{categoriaId}/negocio/{negocioId}")
-    @Operation(summary = "Productos por categoría", description = "Retorna los productos de una categoría dentro de un negocio")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @Operation(summary = "Productos por categoría")
     public ResponseEntity<List<ProductoResponse>> obtenerPorCategoria(
-            @Parameter(description = "ID de la categoría") @PathVariable Long categoriaId,
-            @Parameter(description = "ID del negocio") @PathVariable Long negocioId) {
+            @PathVariable Long categoriaId,
+            @PathVariable Long negocioId) {
         return ResponseEntity.ok(productoService.obtenerPorCategoria(categoriaId, negocioId));
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener producto por ID", description = "Retorna un producto específico basado en su ID")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @Operation(summary = "Obtener producto por ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Producto encontrado"),
-            @ApiResponse(responseCode = "404", description = "Producto no encontrado")
+        @ApiResponse(responseCode = "200", description = "Producto encontrado"),
+        @ApiResponse(responseCode = "404", description = "Producto no encontrado")
     })
     public ResponseEntity<ProductoResponse> obtenerPorId(
             @Parameter(description = "ID del producto") @PathVariable Long id) {
-        ProductoResponse producto = productoService.obtenerPorId(id);
-        return ResponseEntity.ok(producto);
-    }
-
-    @PostMapping
-    @Operation(summary = "Crear nuevo producto", description = "Registra un nuevo producto en la base de datos")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Producto creado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
-    })
-    public ResponseEntity<ProductoResponse> crear(
-            @Valid @RequestBody ProductoRequest request) {
-        ProductoResponse producto = productoService.crear(request);
-        return new ResponseEntity<>(producto, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    @Operation(summary = "Actualizar producto", description = "Actualiza los datos de un producto existente")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Producto actualizado exitosamente"),
-            @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
-            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
-    })
-    public ResponseEntity<ProductoResponse> actualizar(
-            @Parameter(description = "ID del producto") @PathVariable Long id,
-            @Valid @RequestBody ProductoRequest request) {
-        ProductoResponse producto = productoService.actualizar(id, request);
-        return ResponseEntity.ok(producto);
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar producto", description = "Elimina un producto de la base de datos")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Producto eliminado exitosamente"),
-            @ApiResponse(responseCode = "404", description = "Producto no encontrado")
-    })
-    public ResponseEntity<Void> eliminar(
-            @Parameter(description = "ID del producto") @PathVariable Long id) {
-        productoService.eliminar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(productoService.obtenerPorId(id));
     }
 
     @GetMapping("/buscar")
-    @Operation(summary = "Buscar productos por nombre", description = "Busca productos cuyo nombre contenga el texto especificado")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @Operation(summary = "Buscar productos por nombre")
     @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
     public ResponseEntity<List<ProductoResponse>> buscarPorNombre(
-            @Parameter(description = "Texto a buscar en el nombre") @RequestParam String nombre) {
-        List<ProductoResponse> productos = productoService.buscarPorNombre(nombre);
-        return ResponseEntity.ok(productos);
+            @RequestParam String nombre) {
+        return ResponseEntity.ok(productoService.buscarPorNombre(nombre));
     }
 
     @GetMapping("/buscar/negocio/{negocioId}")
-    @Operation(summary = "Buscar productos por nombre en negocio", description = "Busca productos por nombre dentro de un negocio específico")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @Operation(summary = "Buscar productos por nombre en negocio")
     public ResponseEntity<List<ProductoResponse>> buscarPorNombreEnNegocio(
-            @Parameter(description = "Texto a buscar en el nombre") @RequestParam String nombre,
-            @Parameter(description = "ID del negocio") @PathVariable Long negocioId) {
+            @RequestParam String nombre,
+            @PathVariable Long negocioId) {
         return ResponseEntity.ok(productoService.buscarPorNombreEnNegocio(nombre, negocioId));
+    }
+
+    // ── Escritura: solo ADMIN ─────────────────────────────────────────────────
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Crear nuevo producto", description = "Solo ADMIN")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Producto creado exitosamente"),
+        @ApiResponse(responseCode = "403", description = "Solo el ADMIN puede crear productos")
+    })
+    public ResponseEntity<ProductoResponse> crear(@Valid @RequestBody ProductoRequest request) {
+        return new ResponseEntity<>(productoService.crear(request), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Actualizar producto", description = "Solo ADMIN")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Producto actualizado exitosamente"),
+        @ApiResponse(responseCode = "403", description = "Solo el ADMIN puede editar productos"),
+        @ApiResponse(responseCode = "404", description = "Producto no encontrado")
+    })
+    public ResponseEntity<ProductoResponse> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductoRequest request) {
+        return ResponseEntity.ok(productoService.actualizar(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Eliminar producto", description = "Solo ADMIN")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Producto eliminado exitosamente"),
+        @ApiResponse(responseCode = "403", description = "Solo el ADMIN puede eliminar productos"),
+        @ApiResponse(responseCode = "404", description = "Producto no encontrado")
+    })
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        productoService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 }

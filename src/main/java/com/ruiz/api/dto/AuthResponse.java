@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class AuthResponse {
     private boolean success;
     private String message;
+    private Long id;           // ← ID del usuario para que el front lo use en peticiones
     private String username;
     private String token;
     private String rol;

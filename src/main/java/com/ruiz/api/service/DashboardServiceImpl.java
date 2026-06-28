@@ -21,6 +21,7 @@ import com.ruiz.api.repository.ProveedorRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.ruiz.api.repository.PedidoProveedorRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -46,6 +47,7 @@ public class DashboardServiceImpl implements DashboardService {
     private final CategoriaRepository categoriaRepository;
     private final ProveedorRepository proveedorRepository;
     private final MovimientoRepository movimientoRepository;
+    private final PedidoProveedorRepository pedidoProveedorRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -86,6 +88,7 @@ public class DashboardServiceImpl implements DashboardService {
                 .valorTotalInventario(productoRepository.calcularValorInventarioPorNegocio(negocioId))
                 .productosStockCritico(bajoStock.size())
                 .productosAgotados(agotados.size())
+                .pedidosPendientes(pedidoProveedorRepository.countPendientesByNegocioId(negocioId))
                 .productosBajoStock(bajoStockDTO)
                 .ultimosMovimientos(ultimosMovimientos)
                 .build();
