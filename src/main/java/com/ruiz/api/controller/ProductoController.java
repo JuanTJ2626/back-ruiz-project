@@ -32,6 +32,30 @@ public class ProductoController {
         return ResponseEntity.ok(productos);
     }
 
+    @GetMapping("/negocio/{negocioId}")
+    @Operation(summary = "Listar productos por negocio", description = "Retorna todos los productos de un negocio específico")
+    @ApiResponse(responseCode = "200", description = "Lista de productos del negocio")
+    public ResponseEntity<List<ProductoResponse>> obtenerPorNegocio(
+            @Parameter(description = "ID del negocio") @PathVariable Long negocioId) {
+        return ResponseEntity.ok(productoService.obtenerPorNegocio(negocioId));
+    }
+
+    @GetMapping("/bajo-stock/{negocioId}")
+    @Operation(summary = "Productos con stock crítico", description = "Retorna productos cuyo stock actual es menor o igual al stock mínimo")
+    @ApiResponse(responseCode = "200", description = "Lista de productos con stock bajo")
+    public ResponseEntity<List<ProductoResponse>> obtenerBajoStock(
+            @Parameter(description = "ID del negocio") @PathVariable Long negocioId) {
+        return ResponseEntity.ok(productoService.obtenerProductosBajoStock(negocioId));
+    }
+
+    @GetMapping("/categoria/{categoriaId}/negocio/{negocioId}")
+    @Operation(summary = "Productos por categoría", description = "Retorna los productos de una categoría dentro de un negocio")
+    public ResponseEntity<List<ProductoResponse>> obtenerPorCategoria(
+            @Parameter(description = "ID de la categoría") @PathVariable Long categoriaId,
+            @Parameter(description = "ID del negocio") @PathVariable Long negocioId) {
+        return ResponseEntity.ok(productoService.obtenerPorCategoria(categoriaId, negocioId));
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Obtener producto por ID", description = "Retorna un producto específico basado en su ID")
     @ApiResponses(value = {
@@ -89,5 +113,13 @@ public class ProductoController {
             @Parameter(description = "Texto a buscar en el nombre") @RequestParam String nombre) {
         List<ProductoResponse> productos = productoService.buscarPorNombre(nombre);
         return ResponseEntity.ok(productos);
+    }
+
+    @GetMapping("/buscar/negocio/{negocioId}")
+    @Operation(summary = "Buscar productos por nombre en negocio", description = "Busca productos por nombre dentro de un negocio específico")
+    public ResponseEntity<List<ProductoResponse>> buscarPorNombreEnNegocio(
+            @Parameter(description = "Texto a buscar en el nombre") @RequestParam String nombre,
+            @Parameter(description = "ID del negocio") @PathVariable Long negocioId) {
+        return ResponseEntity.ok(productoService.buscarPorNombreEnNegocio(nombre, negocioId));
     }
 }

@@ -18,6 +18,12 @@ public class ProductoResponse {
     private String descripcion;
     private Double precio;
     private Integer stock;
+    private String sku;
+    private Integer stockMinimo;
+    private String imagenUrl;
+    private Long categoriaId;
+    private String categoriaNombre;
+    private Long negocioId;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
 }

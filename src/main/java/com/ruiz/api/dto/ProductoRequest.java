@@ -26,4 +26,17 @@ public class ProductoRequest {
     @NotNull(message = "El stock es obligatorio")
     @Min(value = 0, message = "El stock no puede ser negativo")
     private Integer stock;
+
+    @Size(max = 50, message = "El SKU no puede exceder los 50 caracteres")
+    private String sku;
+
+    @Min(value = 0, message = "El stock mínimo no puede ser negativo")
+    private Integer stockMinimo;
+
+    private String imagenUrl;
+
+    private Long categoriaId;
+
+    @NotNull(message = "El negocio ID es obligatorio")
+    private Long negocioId;
 }
