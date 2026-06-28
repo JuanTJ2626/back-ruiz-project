@@ -70,29 +70,43 @@ public class AuthServiceImpl implements AuthService {
                     .build();
         }
 
+        // Si viene negocioId → es un EMPLEADO creado por un ADMIN
+        // Si no viene         → es un registro público (nuevo ADMIN con negocio propio)
+        boolean esEmpleado = request.getNegocioId() != null;
+
         Usuario nuevoUsuario = Usuario.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
-                .rol(Usuario.Rol.ADMIN) // Primer usuario es ADMIN
+                .nombre(request.getNombre())
+                .rol(esEmpleado
+                        ? (request.getRol() != null ? request.getRol() : Usuario.Rol.EMPLEADO)
+                        : Usuario.Rol.ADMIN)
                 .activo(true)
                 .build();
 
         usuarioRepository.save(nuevoUsuario);
 
-        // Crear negocio por defecto
-        Negocio nuevoNegocio = Negocio.builder()
-                .nombre("Mi Negocio")
-                .usuario(nuevoUsuario)
-                .build();
-        negocioRepository.save(nuevoNegocio);
+        Negocio negocio;
+        if (esEmpleado) {
+            // Asociar al negocio existente
+            negocio = negocioRepository.findById(request.getNegocioId())
+                    .orElseThrow(() -> new RuntimeException("Negocio no encontrado con id: " + request.getNegocioId()));
+        } else {
+            // Crear negocio por defecto para el nuevo ADMIN
+            negocio = Negocio.builder()
+                    .nombre("Mi Negocio")
+                    .usuario(nuevoUsuario)
+                    .build();
+            negocioRepository.save(negocio);
+        }
 
-        nuevoUsuario.setNegocio(nuevoNegocio);
+        nuevoUsuario.setNegocio(negocio);
         usuarioRepository.save(nuevoUsuario);
 
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("rol", nuevoUsuario.getRol().name());
-        extraClaims.put("negocioId", nuevoNegocio.getId());
+        extraClaims.put("negocioId", negocio.getId());
 
         String jwtToken = jwtService.generateToken(extraClaims, User.builder()
                 .username(nuevoUsuario.getUsername())
@@ -102,12 +116,12 @@ public class AuthServiceImpl implements AuthService {
 
         return AuthResponse.builder()
                 .success(true)
-                .message("Usuario registrado exitosamente")
+                .message(esEmpleado ? "Empleado creado exitosamente" : "Usuario registrado exitosamente")
                 .id(nuevoUsuario.getId())
                 .username(nuevoUsuario.getUsername())
                 .token(jwtToken)
                 .rol(nuevoUsuario.getRol().name())
-                .negocioId(nuevoNegocio.getId())
+                .negocioId(negocio.getId())
                 .build();
     }
 }

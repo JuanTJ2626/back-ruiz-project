@@ -2,6 +2,7 @@ com\ruiz\api\controller\ProductoController.class
 com\ruiz\api\service\ProveedorServiceImpl.class
 com\ruiz\api\dto\NegocioResponse.class
 com\ruiz\api\entity\PedidoProveedor.class
+com\ruiz\api\dto\UsuarioUpdateRequest$UsuarioUpdateRequestBuilder.class
 com\ruiz\api\config\UserDetailsServiceImpl.class
 com\ruiz\api\entity\AtributoProducto.class
 com\ruiz\api\controller\ProveedorController.class
@@ -21,6 +22,7 @@ com\ruiz\api\repository\ProveedorRepository.class
 com\ruiz\api\service\ArchivoService.class
 com\ruiz\api\repository\PedidoProveedorRepository.class
 com\ruiz\api\service\AtributoProductoService.class
+com\ruiz\api\service\UsuarioServiceImpl.class
 com\ruiz\api\repository\NegocioRepository.class
 com\ruiz\api\service\ProductoServiceImpl.class
 com\ruiz\api\dto\PedidoProveedorRequest.class
@@ -31,6 +33,7 @@ com\ruiz\api\dto\PedidoProveedorResponse$PedidoProveedorResponseBuilder.class
 com\ruiz\api\service\AuthService.class
 com\ruiz\api\exception\GlobalExceptionHandler.class
 com\ruiz\api\entity\Usuario.class
+com\ruiz\api\dto\UsuarioUpdateRequest.class
 com\ruiz\api\controller\AuthController.class
 com\ruiz\api\dto\ProveedorResponse$ProveedorResponseBuilder.class
 com\ruiz\api\service\DashboardServiceImpl.class
@@ -76,6 +79,7 @@ com\ruiz\api\entity\Movimiento.class
 com\ruiz\api\config\CorsConfig.class
 com\ruiz\api\RuizApiApplication.class
 com\ruiz\api\controller\CategoriaController.class
+com\ruiz\api\dto\UsuarioResponse.class
 com\ruiz\api\entity\Negocio$NegocioBuilder.class
 com\ruiz\api\dto\ProveedorRequest$ProveedorRequestBuilder.class
 com\ruiz\api\entity\PedidoProveedor$PedidoProveedorBuilder.class
@@ -83,10 +87,13 @@ com\ruiz\api\service\MovimientoServiceImpl$1.class
 com\ruiz\api\entity\Categoria$CategoriaBuilder.class
 com\ruiz\api\dto\CategoriaDTO.class
 com\ruiz\api\repository\UsuarioRepository.class
+com\ruiz\api\service\UsuarioService.class
+com\ruiz\api\dto\UsuarioResponse$UsuarioResponseBuilder.class
 com\ruiz\api\dto\ProductoResponse$ProductoResponseBuilder.class
 com\ruiz\api\entity\Proveedor$ProveedorBuilder.class
 com\ruiz\api\dto\MovimientoRequest$MovimientoRequestBuilder.class
 com\ruiz\api\service\PedidoProveedorServiceImpl.class
+com\ruiz\api\controller\UsuarioController.class
 com\ruiz\api\dto\AtributoProductoDTO$AtributoProductoDTOBuilder.class
 com\ruiz\api\entity\Categoria.class
 com\ruiz\api\repository\MovimientoRepository.class

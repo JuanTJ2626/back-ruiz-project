@@ -15,6 +15,7 @@ C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\controlle
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\controller\PedidoProveedorController.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\controller\ProductoController.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\controller\ProveedorController.java
+C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\controller\UsuarioController.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\AtributoProductoDTO.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\AuthResponse.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\CategoriaDTO.java
@@ -31,6 +32,8 @@ C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\Produ
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\ProveedorRequest.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\ProveedorResponse.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\RegisterRequest.java
+C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\UsuarioResponse.java
+C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\UsuarioUpdateRequest.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\entity\AtributoProducto.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\entity\Categoria.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\entity\Movimiento.java
@@ -70,3 +73,5 @@ C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\P
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\ProductoServiceImpl.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\ProveedorService.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\ProveedorServiceImpl.java
+C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\UsuarioService.java
+C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\UsuarioServiceImpl.java
