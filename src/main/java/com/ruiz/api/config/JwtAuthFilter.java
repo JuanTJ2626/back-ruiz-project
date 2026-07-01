@@ -29,6 +29,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     // Paths que nunca deben pasar por validación JWT
     private static final List<String> PUBLIC_PATHS = List.of(
             "/api/auth/",
+            "/api/productos/bot/",
             "/uploads/",
             "/v3/api-docs",
             "/swagger-ui"

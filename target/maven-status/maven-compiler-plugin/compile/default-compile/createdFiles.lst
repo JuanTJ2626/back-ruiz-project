@@ -98,6 +98,7 @@ com\ruiz\api\dto\AtributoProductoDTO$AtributoProductoDTOBuilder.class
 com\ruiz\api\entity\Categoria.class
 com\ruiz\api\repository\MovimientoRepository.class
 com\ruiz\api\service\CategoriaServiceImpl.class
+com\ruiz\api\controller\BotController.class
 com\ruiz\api\exception\ResourceNotFoundException.class
 com\ruiz\api\dto\MovimientoRequest.class
 com\ruiz\api\entity\Producto.class

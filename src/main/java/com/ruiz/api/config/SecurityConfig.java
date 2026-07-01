@@ -49,6 +49,9 @@ public class SecurityConfig {
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 // Imágenes públicas
                 .requestMatchers("/uploads/**").permitAll()
+                // Endpoints para el bot (autenticados por X-Bot-Key, no JWT)
+                .requestMatchers("/api/productos/bot/**").permitAll()
+                .requestMatchers("/api/bot/**").permitAll()
                 // Todo lo demás requiere JWT
                 .anyRequest().authenticated()
             )

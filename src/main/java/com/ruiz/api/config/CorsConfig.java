@@ -23,7 +23,13 @@ public class CorsConfig {
                 "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
         ));
 
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(Arrays.asList(
+                "*",
+                "Authorization",
+                "Content-Type",
+                "X-Bot-Key",
+                "ngrok-skip-browser-warning"
+        ));
 
         config.setAllowCredentials(true);
 

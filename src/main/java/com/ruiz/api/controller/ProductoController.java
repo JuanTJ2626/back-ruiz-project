@@ -15,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/productos")
@@ -90,6 +92,26 @@ public class ProductoController {
             @RequestParam String nombre,
             @PathVariable Long negocioId) {
         return ResponseEntity.ok(productoService.buscarPorNombreEnNegocio(nombre, negocioId));
+    }
+
+    // ── Endpoint dedicado para el bot (sin JWT, protegido por API key) ────────
+
+    @GetMapping("/bot/{negocioId}")
+    @Operation(summary = "Productos para el bot", description = "Autenticado por X-Bot-Key, sin JWT")
+    @ApiResponse(responseCode = "200", description = "Lista de productos del negocio")
+    public ResponseEntity<Map<String, Object>> productosParaBot(
+            @Parameter(description = "ID del negocio") @PathVariable Long negocioId,
+            @RequestHeader("X-Bot-Key") String botKey) {
+
+        if (!"MI_CLAVE_SECRETA_BOT_123".equals(botKey)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        List<ProductoResponse> productos = productoService.obtenerPorNegocio(negocioId);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("total", productos.size());
+        resp.put("productos", productos);
+        return ResponseEntity.ok(resp);
     }
 
     // ── Escritura: solo ADMIN ─────────────────────────────────────────────────
