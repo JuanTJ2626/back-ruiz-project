@@ -1,29 +1,19 @@
 package com.ruiz.api.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 @Slf4j
 @Service
 public class ArchivoServiceImpl implements ArchivoService {
-
-    // Carpeta raíz donde se guardan las imágenes (configurable en application.properties)
-    @Value("${app.upload.dir:uploads}")
-    private String uploadDir;
-
-    // URL base del servidor (configurable por perfil)
-    @Value("${app.base-url:http://localhost:8080}")
-    private String baseUrl;
 
     // Extensiones permitidas
     private static final List<String> EXTENSIONES_PERMITIDAS = List.of(
@@ -33,45 +23,58 @@ public class ArchivoServiceImpl implements ArchivoService {
     // Tamaño máximo: 5 MB
     private static final long MAX_SIZE_BYTES = 5 * 1024 * 1024;
 
+    private final Cloudinary cloudinary;
+
+    public ArchivoServiceImpl(
+            @Value("${cloudinary.cloud-name}") String cloudName,
+            @Value("${cloudinary.api-key}") String apiKey,
+            @Value("${cloudinary.api-secret}") String apiSecret) {
+
+        this.cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", cloudName,
+                "api_key",    apiKey,
+                "api_secret", apiSecret,
+                "secure",     true
+        ));
+    }
+
     @Override
     public String guardarImagen(MultipartFile archivo, String subcarpeta) {
         validarArchivo(archivo);
 
         try {
-            // Crear carpeta si no existe: uploads/productos/ o uploads/negocios/
-            Path dirPath = Paths.get(uploadDir, subcarpeta);
-            Files.createDirectories(dirPath);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> result = cloudinary.uploader().upload(
+                    archivo.getBytes(),
+                    ObjectUtils.asMap(
+                            "folder",          "ruiz/" + subcarpeta,
+                            "resource_type",   "image",
+                            "use_filename",    false,
+                            "unique_filename", true
+                    )
+            );
 
-            // Nombre único para evitar colisiones
-            String extension = obtenerExtension(archivo.getOriginalFilename());
-            String nombreUnico = UUID.randomUUID().toString() + "." + extension;
-
-            // Guardar el archivo
-            Path destino = dirPath.resolve(nombreUnico);
-            Files.copy(archivo.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
-
-            // Devolver URL pública accesible desde el frontend
-            // Ejemplo: http://localhost:8080/uploads/productos/abc123.jpg
-            String urlPublica = baseUrl + "/uploads/" + subcarpeta + "/" + nombreUnico;
-            log.info("Imagen guardada: {}", urlPublica);
-            return urlPublica;
+            String url = (String) result.get("secure_url");
+            log.info("Imagen subida a Cloudinary: {}", url);
+            return url;
 
         } catch (IOException e) {
-            log.error("Error al guardar imagen: {}", e.getMessage());
-            throw new RuntimeException("No se pudo guardar la imagen en el servidor", e);
+            log.error("Error al subir imagen a Cloudinary: {}", e.getMessage());
+            throw new RuntimeException("No se pudo subir la imagen", e);
         }
     }
 
     @Override
     public void eliminarImagen(String nombreArchivo, String subcarpeta) {
+        // El publicId en Cloudinary es: ruiz/<subcarpeta>/<nombreArchivo sin extensión>
+        String publicId = "ruiz/" + subcarpeta + "/" + nombreArchivo
+                .replaceAll("\\.[^.]+$", ""); // quita extensión
+
         try {
-            Path rutaArchivo = Paths.get(uploadDir, subcarpeta, nombreArchivo);
-            if (Files.exists(rutaArchivo)) {
-                Files.delete(rutaArchivo);
-                log.info("Imagen eliminada: {}/{}", subcarpeta, nombreArchivo);
-            }
+            cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            log.info("Imagen eliminada de Cloudinary: {}", publicId);
         } catch (IOException e) {
-            log.warn("No se pudo eliminar la imagen {}/{}: {}", subcarpeta, nombreArchivo, e.getMessage());
+            log.warn("No se pudo eliminar imagen de Cloudinary {}: {}", publicId, e.getMessage());
         }
     }
 
@@ -86,8 +89,8 @@ public class ArchivoServiceImpl implements ArchivoService {
 
         if (archivo.getSize() > MAX_SIZE_BYTES) {
             throw new IllegalArgumentException(
-                "El archivo excede el tamaño máximo permitido de 5 MB. " +
-                "Tamaño recibido: " + (archivo.getSize() / 1024 / 1024) + " MB"
+                "El archivo excede el tamaño máximo de 5 MB. " +
+                "Recibido: " + (archivo.getSize() / 1024 / 1024) + " MB"
             );
         }
 
