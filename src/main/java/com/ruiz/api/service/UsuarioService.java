@@ -25,4 +25,7 @@ public interface UsuarioService {
 
     /** Eliminar usuario permanentemente. */
     void eliminar(Long id);
+
+    /** Asignar (o cambiar) el negocio de un usuario. Solo ADMIN. */
+    UsuarioResponse asignarNegocio(Long usuarioId, Long negocioId);
 }

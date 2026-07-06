@@ -103,4 +103,21 @@ public class UsuarioController {
         usuarioService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/negocio")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+        summary = "Asignar negocio a un usuario",
+        description = "Solo ADMIN. Permite asignar o cambiar el negocio al que pertenece un empleado."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Negocio asignado correctamente"),
+        @ApiResponse(responseCode = "404", description = "Usuario o negocio no encontrado"),
+        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede asignar negocios")
+    })
+    public ResponseEntity<UsuarioResponse> asignarNegocio(
+            @Parameter(description = "ID del usuario") @PathVariable Long id,
+            @Parameter(description = "ID del negocio a asignar") @RequestParam Long negocioId) {
+        return ResponseEntity.ok(usuarioService.asignarNegocio(id, negocioId));
+    }
 }

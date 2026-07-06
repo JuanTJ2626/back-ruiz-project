@@ -1,5 +1,7 @@
 package com.ruiz.api.service;
 
+import com.ruiz.api.entity.Negocio;
+import com.ruiz.api.repository.NegocioRepository;
 import com.ruiz.api.dto.UsuarioResponse;
 import com.ruiz.api.dto.UsuarioUpdateRequest;
 import com.ruiz.api.entity.Usuario;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final NegocioRepository negocioRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -81,6 +84,17 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
         usuarioRepository.delete(usuario);
+    }
+
+    @Override
+    @Transactional
+    public UsuarioResponse asignarNegocio(Long usuarioId, Long negocioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", usuarioId));
+        Negocio negocio = negocioRepository.findById(negocioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Negocio", "id", negocioId));
+        usuario.setNegocio(negocio);
+        return mapToResponse(usuarioRepository.save(usuario));
     }
 
     // -------------------------------------------------------
