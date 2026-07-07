@@ -2,7 +2,9 @@ package com.ruiz.api.controller;
 
 import com.ruiz.api.dto.PedidoProveedorRequest;
 import com.ruiz.api.dto.PedidoProveedorResponse;
+import com.ruiz.api.dto.PedidoProveedorUpdateRequest;
 import com.ruiz.api.entity.PedidoProveedor.EstadoPedido;
+import com.ruiz.api.service.EmailService;
 import com.ruiz.api.service.PedidoProveedorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,6 +27,7 @@ import java.util.List;
 public class PedidoProveedorController {
 
     private final PedidoProveedorService pedidoService;
+    private final EmailService emailService;
 
     @GetMapping("/negocio/{negocioId}")
     @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
@@ -97,14 +100,14 @@ public class PedidoProveedorController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Actualizar datos del pedido", description = "Solo ADMIN")
+    @Operation(summary = "Actualizar datos del pedido", description = "Solo ADMIN. No se puede cambiar el proveedor ni el usuario creador.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Pedido actualizado"),
         @ApiResponse(responseCode = "403", description = "Solo ADMIN")
     })
     public ResponseEntity<PedidoProveedorResponse> actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody PedidoProveedorRequest request) {
+            @Valid @RequestBody PedidoProveedorUpdateRequest request) {
         return ResponseEntity.ok(pedidoService.actualizar(id, request));
     }
 
@@ -136,4 +139,31 @@ public class PedidoProveedorController {
         pedidoService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/enviar-email")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+        summary = "Enviar email de notificación al proveedor",
+        description = "Solo ADMIN. Envía un email al proveedor con los detalles del pedido. " +
+                      "El proveedor debe tener un email configurado."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Email enviado exitosamente"),
+        @ApiResponse(responseCode = "400", description = "El proveedor no tiene email configurado"),
+        @ApiResponse(responseCode = "404", description = "Pedido no encontrado"),
+        @ApiResponse(responseCode = "500", description = "Error al enviar el email"),
+        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede enviar emails")
+    })
+    public ResponseEntity<String> enviarEmail(@PathVariable Long id) {
+        PedidoProveedorResponse pedidoResponse = pedidoService.obtenerPorId(id);
+        
+        // Convertir response a entity para el email service
+        // (En producción, mejor obtener la entidad directamente del service)
+        com.ruiz.api.entity.PedidoProveedor pedido = pedidoService.obtenerEntidadPorId(id);
+        
+        emailService.enviarNotificacionPedido(pedido);
+        
+        return ResponseEntity.ok("Email enviado exitosamente a " + pedidoResponse.getProveedorNombre());
+    }
 }
+

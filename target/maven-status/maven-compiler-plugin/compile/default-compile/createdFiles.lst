@@ -16,6 +16,7 @@ com\ruiz\api\service\MovimientoService.class
 com\ruiz\api\dto\PedidoProveedorResponse.class
 com\ruiz\api\dto\CategoriaDTO$CategoriaDTOBuilder.class
 com\ruiz\api\dto\PedidoProveedorRequest$PedidoProveedorRequestBuilder.class
+com\ruiz\api\service\EmailService.class
 com\ruiz\api\dto\DashboardResponse.class
 com\ruiz\api\entity\Movimiento$TipoMovimiento.class
 com\ruiz\api\repository\ProveedorRepository.class
@@ -70,8 +71,10 @@ com\ruiz\api\config\JwtService.class
 com\ruiz\api\entity\Negocio.class
 com\ruiz\api\entity\Usuario$Rol.class
 com\ruiz\api\repository\AtributoProductoRepository.class
+com\ruiz\api\dto\PedidoProveedorUpdateRequest.class
 com\ruiz\api\dto\ProductoRequest$ProductoRequestBuilder.class
 com\ruiz\api\dto\AtributoProductoDTO.class
+com\ruiz\api\service\EmailServiceImpl.class
 com\ruiz\api\dto\MovimientoResponse$MovimientoResponseBuilder.class
 com\ruiz\api\controller\MovimientoController.class
 com\ruiz\api\service\MovimientoServiceImpl.class
@@ -79,6 +82,7 @@ com\ruiz\api\entity\Movimiento.class
 com\ruiz\api\config\CorsConfig.class
 com\ruiz\api\RuizApiApplication.class
 com\ruiz\api\controller\CategoriaController.class
+com\ruiz\api\dto\PedidoProveedorUpdateRequest$PedidoProveedorUpdateRequestBuilder.class
 com\ruiz\api\dto\UsuarioResponse.class
 com\ruiz\api\entity\Negocio$NegocioBuilder.class
 com\ruiz\api\dto\ProveedorRequest$ProveedorRequestBuilder.class

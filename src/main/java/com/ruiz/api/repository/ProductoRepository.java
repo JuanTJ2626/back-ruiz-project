@@ -23,6 +23,11 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     // Buscar por categoría dentro de un negocio
     List<Producto> findByCategoriaIdAndNegocioId(Long categoriaId, Long negocioId);
 
+    // SET NULL en categoria (cuando se elimina una categoría)
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("UPDATE Producto p SET p.categoria = null WHERE p.categoria.id = :categoriaId")
+    void clearCategoriaId(@Param("categoriaId") Long categoriaId);
+
     // Productos con stock en nivel crítico (stock <= stockMinimo)
     @Query("SELECT p FROM Producto p WHERE p.negocio.id = :negocioId AND p.stock <= p.stockMinimo")
     List<Producto> findProductosBajoStockPorNegocio(@Param("negocioId") Long negocioId);

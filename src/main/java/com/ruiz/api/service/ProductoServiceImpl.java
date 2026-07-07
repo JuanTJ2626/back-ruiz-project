@@ -6,8 +6,11 @@ import com.ruiz.api.entity.Categoria;
 import com.ruiz.api.entity.Negocio;
 import com.ruiz.api.entity.Producto;
 import com.ruiz.api.exception.ResourceNotFoundException;
+import com.ruiz.api.repository.AtributoProductoRepository;
 import com.ruiz.api.repository.CategoriaRepository;
+import com.ruiz.api.repository.MovimientoRepository;
 import com.ruiz.api.repository.NegocioRepository;
+import com.ruiz.api.repository.PedidoProveedorRepository;
 import com.ruiz.api.repository.ProductoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,9 @@ public class ProductoServiceImpl implements ProductoService {
     private final ProductoRepository productoRepository;
     private final NegocioRepository negocioRepository;
     private final CategoriaRepository categoriaRepository;
+    private final AtributoProductoRepository atributoRepository;
+    private final MovimientoRepository movimientoRepository;
+    private final PedidoProveedorRepository pedidoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -112,6 +118,17 @@ public class ProductoServiceImpl implements ProductoService {
     public void eliminar(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto", "id", id));
+
+        // 1. SET NULL en movimientos que referencian este producto
+        movimientoRepository.clearProductoId(id);
+
+        // 2. SET NULL en pedidos que referencian este producto
+        pedidoRepository.clearProductoId(id);
+
+        // 3. Eliminar atributos del producto (CASCADE)
+        atributoRepository.deleteByProductoId(id);
+
+        // 4. Eliminar vinculaciones proveedor-producto (la tabla N:M se limpia automáticamente con JPA)
         productoRepository.delete(producto);
     }
 

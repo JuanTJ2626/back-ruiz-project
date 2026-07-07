@@ -38,11 +38,13 @@ public class Movimiento {
     private LocalDateTime fecha;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "producto_id", nullable = false)
+    @JoinColumn(name = "producto_id",
+                foreignKey = @ForeignKey(name = "fk_movimiento_producto"))
     private Producto producto;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuario_id",
+                foreignKey = @ForeignKey(name = "fk_movimiento_usuario"))
     private Usuario usuario; // Quién hizo el movimiento
 
     @PrePersist

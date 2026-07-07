@@ -6,8 +6,10 @@ import com.ruiz.api.entity.Negocio;
 import com.ruiz.api.exception.ResourceNotFoundException;
 import com.ruiz.api.repository.CategoriaRepository;
 import com.ruiz.api.repository.NegocioRepository;
+import com.ruiz.api.repository.ProductoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +20,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     private final CategoriaRepository categoriaRepository;
     private final NegocioRepository negocioRepository;
+    private final ProductoRepository productoRepository;
 
     @Override
     public List<CategoriaDTO> obtenerPorNegocio(Long negocioId) {
@@ -52,9 +55,14 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     @Override
+    @Transactional
     public void eliminar(Long id) {
         Categoria categoria = categoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria", "id", id));
+
+        // SET NULL en productos que referencian esta categoría
+        productoRepository.clearCategoriaId(id);
+
         categoriaRepository.delete(categoria);
     }
 

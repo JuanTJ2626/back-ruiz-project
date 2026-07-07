@@ -15,6 +15,19 @@ public interface PedidoProveedorRepository extends JpaRepository<PedidoProveedor
     // Todos los pedidos de un proveedor
     List<PedidoProveedor> findByProveedorIdOrderByFechaPedidoDesc(Long proveedorId);
 
+    // Eliminar todos los pedidos de un proveedor (CASCADE al eliminar proveedor)
+    void deleteByProveedorId(Long proveedorId);
+
+    // SET NULL en producto (cuando se elimina un producto)
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("UPDATE PedidoProveedor p SET p.producto = null WHERE p.producto.id = :productoId")
+    void clearProductoId(@Param("productoId") Long productoId);
+
+    // SET NULL en usuario (cuando se elimina un usuario)
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("UPDATE PedidoProveedor p SET p.usuarioCreador = null WHERE p.usuarioCreador.id = :usuarioId")
+    void clearUsuarioId(@Param("usuarioId") Long usuarioId);
+
     // Pedidos de un negocio completo (via proveedor)
     @Query("SELECT p FROM PedidoProveedor p WHERE p.proveedor.negocio.id = :negocioId ORDER BY p.fechaPedido DESC")
     List<PedidoProveedor> findByNegocioId(@Param("negocioId") Long negocioId);

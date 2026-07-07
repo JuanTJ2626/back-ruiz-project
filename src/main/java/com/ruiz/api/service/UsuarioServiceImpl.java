@@ -1,7 +1,9 @@
 package com.ruiz.api.service;
 
 import com.ruiz.api.entity.Negocio;
+import com.ruiz.api.repository.MovimientoRepository;
 import com.ruiz.api.repository.NegocioRepository;
+import com.ruiz.api.repository.PedidoProveedorRepository;
 import com.ruiz.api.dto.UsuarioResponse;
 import com.ruiz.api.dto.UsuarioUpdateRequest;
 import com.ruiz.api.entity.Usuario;
@@ -23,6 +25,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final NegocioRepository negocioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MovimientoRepository movimientoRepository;
+    private final PedidoProveedorRepository pedidoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -83,6 +87,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     public void eliminar(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+
+        // 1. SET NULL en movimientos que referencian este usuario
+        movimientoRepository.clearUsuarioId(id);
+
+        // 2. SET NULL en pedidos que referencian este usuario
+        pedidoRepository.clearUsuarioId(id);
+
         usuarioRepository.delete(usuario);
     }
 

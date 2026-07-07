@@ -2,6 +2,7 @@ package com.ruiz.api.service;
 
 import com.ruiz.api.dto.PedidoProveedorRequest;
 import com.ruiz.api.dto.PedidoProveedorResponse;
+import com.ruiz.api.dto.PedidoProveedorUpdateRequest;
 import com.ruiz.api.entity.PedidoProveedor;
 import com.ruiz.api.entity.PedidoProveedor.EstadoPedido;
 import com.ruiz.api.entity.Producto;
@@ -63,7 +64,7 @@ public class PedidoProveedorServiceImpl implements PedidoProveedorService {
 
     @Override
     @Transactional
-    public PedidoProveedorResponse actualizar(Long id, PedidoProveedorRequest request) {
+    public PedidoProveedorResponse actualizar(Long id, PedidoProveedorUpdateRequest request) {
         PedidoProveedor pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("PedidoProveedor", "id", id));
 
@@ -73,12 +74,14 @@ public class PedidoProveedorServiceImpl implements PedidoProveedorService {
                     .orElseThrow(() -> new ResourceNotFoundException("Producto", "id", request.getProductoId()));
         }
 
+        // Actualizar campos editables (NO se cambia el usuario ni el proveedor)
         pedido.setDescripcion(request.getDescripcion());
         pedido.setCantidad(request.getCantidad());
         pedido.setPrecioUnitario(request.getPrecioUnitario());
         pedido.setFechaEsperada(request.getFechaEsperada());
         pedido.setNotas(request.getNotas());
         pedido.setProducto(producto);
+        // NO modificar: usuario, proveedor, fechaPedido
 
         return mapToResponse(pedidoRepository.save(pedido));
     }
@@ -154,6 +157,13 @@ public class PedidoProveedorServiceImpl implements PedidoProveedorService {
         PedidoProveedor pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("PedidoProveedor", "id", id));
         pedidoRepository.delete(pedido);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PedidoProveedor obtenerEntidadPorId(Long id) {
+        return pedidoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("PedidoProveedor", "id", id));
     }
 
     // -------------------------------------------------------

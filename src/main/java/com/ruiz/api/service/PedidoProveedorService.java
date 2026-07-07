@@ -2,6 +2,7 @@ package com.ruiz.api.service;
 
 import com.ruiz.api.dto.PedidoProveedorRequest;
 import com.ruiz.api.dto.PedidoProveedorResponse;
+import com.ruiz.api.dto.PedidoProveedorUpdateRequest;
 import com.ruiz.api.entity.PedidoProveedor.EstadoPedido;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface PedidoProveedorService {
     PedidoProveedorResponse crear(PedidoProveedorRequest request);
 
     /** Actualiza los datos del pedido (descripción, cantidad, fecha esperada, notas). */
-    PedidoProveedorResponse actualizar(Long id, PedidoProveedorRequest request);
+    PedidoProveedorResponse actualizar(Long id, PedidoProveedorUpdateRequest request);
 
     /** Cambia el estado del pedido. Al marcarlo RECIBIDO, actualiza automáticamente el stock del producto. */
     PedidoProveedorResponse cambiarEstado(Long id, EstadoPedido nuevoEstado);
@@ -32,4 +33,7 @@ public interface PedidoProveedorService {
     List<PedidoProveedorResponse> obtenerPorNegocioYEstado(Long negocioId, EstadoPedido estado);
 
     void eliminar(Long id);
+
+    /** Obtiene la entidad completa (para usar con EmailService). */
+    com.ruiz.api.entity.PedidoProveedor obtenerEntidadPorId(Long id);
 }

@@ -13,6 +13,18 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
 
     List<Movimiento> findByProductoIdOrderByFechaDesc(Long productoId);
 
+    void deleteByProductoId(Long productoId);
+
+    // SET NULL en producto (cuando se elimina un producto)
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("UPDATE Movimiento m SET m.producto = null WHERE m.producto.id = :productoId")
+    void clearProductoId(@Param("productoId") Long productoId);
+
+    // SET NULL en usuario (cuando se elimina un usuario)
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("UPDATE Movimiento m SET m.usuario = null WHERE m.usuario.id = :usuarioId")
+    void clearUsuarioId(@Param("usuarioId") Long usuarioId);
+
     // Últimos N movimientos de un negocio
     @Query("SELECT m FROM Movimiento m WHERE m.producto.negocio.id = :negocioId ORDER BY m.fecha DESC")
     List<Movimiento> findUltimosMovimientosPorNegocio(@Param("negocioId") Long negocioId);

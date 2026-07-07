@@ -7,6 +7,7 @@ import com.ruiz.api.entity.Producto;
 import com.ruiz.api.entity.Proveedor;
 import com.ruiz.api.exception.ResourceNotFoundException;
 import com.ruiz.api.repository.NegocioRepository;
+import com.ruiz.api.repository.PedidoProveedorRepository;
 import com.ruiz.api.repository.ProductoRepository;
 import com.ruiz.api.repository.ProveedorRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class ProveedorServiceImpl implements ProveedorService {
     private final ProveedorRepository proveedorRepository;
     private final NegocioRepository negocioRepository;
     private final ProductoRepository productoRepository;
+    private final PedidoProveedorRepository pedidoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -77,6 +79,14 @@ public class ProveedorServiceImpl implements ProveedorService {
     public void eliminar(Long id) {
         Proveedor proveedor = proveedorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Proveedor", "id", id));
+
+        // 1. Eliminar pedidos del proveedor (CASCADE)
+        pedidoRepository.deleteByProveedorId(id);
+
+        // 2. Limpiar vinculaciones proveedor-producto (tabla N:M)
+        proveedor.getProductos().clear();
+        proveedorRepository.save(proveedor);
+
         proveedorRepository.delete(proveedor);
     }
 

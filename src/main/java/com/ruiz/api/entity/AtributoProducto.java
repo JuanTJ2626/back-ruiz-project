@@ -36,6 +36,7 @@ public class AtributoProducto {
     private String valor;       // Ej: "Rojo", "M", "Acero"
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "producto_id", nullable = false)
+    @JoinColumn(name = "producto_id", nullable = false,
+                foreignKey = @ForeignKey(name = "fk_atributo_producto"))
     private Producto producto;
 }

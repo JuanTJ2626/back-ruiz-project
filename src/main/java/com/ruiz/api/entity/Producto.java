@@ -47,7 +47,8 @@ public class Producto {
     private Negocio negocio;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoria_id")
+    @JoinColumn(name = "categoria_id",
+                foreignKey = @ForeignKey(name = "fk_producto_categoria"))
     private Categoria categoria;
 
     @Column(name = "fecha_creacion", updatable = false)

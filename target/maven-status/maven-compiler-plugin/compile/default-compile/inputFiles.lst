@@ -28,6 +28,7 @@ C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\Negoc
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\NegocioResponse.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\PedidoProveedorRequest.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\PedidoProveedorResponse.java
+C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\PedidoProveedorUpdateRequest.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\ProductoRequest.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\ProductoResponse.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\dto\ProveedorRequest.java
@@ -64,6 +65,8 @@ C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\C
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\CategoriaServiceImpl.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\DashboardService.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\DashboardServiceImpl.java
+C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\EmailService.java
+C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\EmailServiceImpl.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\MovimientoService.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\MovimientoServiceImpl.java
 C:\Users\DELL\Desktop\PROYECTO DE RUIZ BACK\src\main\java\com\ruiz\api\service\NegocioService.java

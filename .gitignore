@@ -1,0 +1,79 @@
+# ============================
+# Java / Maven
+# ============================
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ============================
+# Spring Boot
+# ============================
+.mvn/
+mvnw
+mvnw.cmd
+
+# ============================
+# IDE
+# ============================
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.settings/
+.classpath
+.project
+.factorypath
+
+# ============================
+# Logs
+# ============================
+*.log
+logs/
+
+# ============================
+# Sistema operativo
+# ============================
+.DS_Store
+Thumbs.db
+
+# ============================
+# Variables de entorno y configuraciones sensibles
+# ============================
+.env
+.env.local
+.env.production
+*.env
+
+# ============================
+# Archivos de configuración con credenciales
+# ============================
+# IMPORTANTE: No subir application.properties si tiene credenciales reales
+# Usa variables de entorno en producción
+# application.properties (descomenta esta línea si quieres protegerlo)
+# application-dev.properties (descomenta si tiene credenciales)
+# application-prod.properties (descomenta si tiene credenciales)
+
+# ============================
+# Archivos temporales
+# ============================
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ============================
+# Build artifacts
+# ============================
+*.class
+*.jar
+*.war
+*.ear
+
+# ============================
+# Otros
+# ============================
+node_modules/
+uploads/

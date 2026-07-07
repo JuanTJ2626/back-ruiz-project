@@ -59,11 +59,13 @@ public class PedidoProveedor {
     private Proveedor proveedor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "producto_id")
+    @JoinColumn(name = "producto_id",
+                foreignKey = @ForeignKey(name = "fk_pedido_producto"))
     private Producto producto;           // producto que se está pidiendo (opcional)
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuario_id",
+                foreignKey = @ForeignKey(name = "fk_pedido_usuario"))
     private Usuario usuarioCreador;      // quién hizo el pedido
 
     @PrePersist
