@@ -30,6 +30,15 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<UsuarioResponse> obtenerTodos() {
+        return usuarioRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<UsuarioResponse> obtenerPorNegocio(Long negocioId) {
         return usuarioRepository.findByNegocioId(negocioId)
                 .stream()
@@ -108,6 +117,15 @@ public class UsuarioServiceImpl implements UsuarioService {
         return mapToResponse(usuarioRepository.save(usuario));
     }
 
+    @Override
+    @Transactional
+    public UsuarioResponse quitarNegocio(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", usuarioId));
+        usuario.setNegocio(null);
+        return mapToResponse(usuarioRepository.save(usuario));
+    }
+
     // -------------------------------------------------------
     private UsuarioResponse mapToResponse(Usuario u) {
         return UsuarioResponse.builder()
@@ -118,6 +136,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .rol(u.getRol())
                 .activo(u.getActivo())
                 .negocioId(u.getNegocio() != null ? u.getNegocio().getId() : null)
+                .negocioNombre(u.getNegocio() != null ? u.getNegocio().getNombre() : null)
                 .build();
     }
 }

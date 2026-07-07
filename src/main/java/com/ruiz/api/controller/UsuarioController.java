@@ -25,6 +25,14 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Listar todos los usuarios", description = "Solo ADMIN")
+    @ApiResponse(responseCode = "200", description = "Lista completa de usuarios")
+    public ResponseEntity<List<UsuarioResponse>> obtenerTodos() {
+        return ResponseEntity.ok(usuarioService.obtenerTodos());
+    }
+
     @GetMapping("/negocio/{negocioId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Listar usuarios del negocio", description = "Solo ADMIN")
@@ -119,5 +127,21 @@ public class UsuarioController {
             @Parameter(description = "ID del usuario") @PathVariable Long id,
             @Parameter(description = "ID del negocio a asignar") @RequestParam Long negocioId) {
         return ResponseEntity.ok(usuarioService.asignarNegocio(id, negocioId));
+    }
+
+    @DeleteMapping("/{id}/negocio")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+        summary = "Quitar negocio de un usuario",
+        description = "Solo ADMIN. Deja al usuario sin negocio asignado."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Negocio quitado correctamente"),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede quitar negocios")
+    })
+    public ResponseEntity<UsuarioResponse> quitarNegocio(
+            @Parameter(description = "ID del usuario") @PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.quitarNegocio(id));
     }
 }

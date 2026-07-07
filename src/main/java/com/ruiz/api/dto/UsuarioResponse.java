@@ -19,4 +19,5 @@ public class UsuarioResponse {
     private Rol rol;
     private Boolean activo;
     private Long negocioId;
+    private String negocioNombre;  // nombre del negocio asociado
 }

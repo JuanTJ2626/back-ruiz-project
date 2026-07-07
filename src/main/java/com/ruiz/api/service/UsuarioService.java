@@ -8,6 +8,9 @@ import java.util.List;
 
 public interface UsuarioService {
 
+    /** Listar todos los usuarios del sistema. */
+    List<UsuarioResponse> obtenerTodos();
+
     /** Listar todos los usuarios de un negocio. */
     List<UsuarioResponse> obtenerPorNegocio(Long negocioId);
 
@@ -28,4 +31,7 @@ public interface UsuarioService {
 
     /** Asignar (o cambiar) el negocio de un usuario. Solo ADMIN. */
     UsuarioResponse asignarNegocio(Long usuarioId, Long negocioId);
+
+    /** Quitar el negocio de un usuario (lo deja sin negocio). Solo ADMIN. */
+    UsuarioResponse quitarNegocio(Long usuarioId);
 }
