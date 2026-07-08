@@ -16,6 +16,7 @@ public class ProveedorResponse {
     private String contacto;
     private String email;
     private String telefono;
+    private String direccion;
     private Long negocioId;
     private String negocioNombre;
 }

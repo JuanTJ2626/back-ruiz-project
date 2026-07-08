@@ -34,6 +34,9 @@ public class Proveedor {
     @Column(length = 20)
     private String telefono;
 
+    @Column(length = 255)
+    private String direccion;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "negocio_id", nullable = false)
     private Negocio negocio;

@@ -29,6 +29,9 @@ public class ProveedorRequest {
     @Size(max = 20, message = "El teléfono no puede exceder los 20 caracteres")
     private String telefono;
 
+    @Size(max = 255, message = "La dirección no puede exceder los 255 caracteres")
+    private String direccion;
+
     @NotNull(message = "El negocio ID es obligatorio")
     private Long negocioId;
 }

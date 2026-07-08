@@ -54,6 +54,7 @@ public class ProveedorServiceImpl implements ProveedorService {
                 .contacto(request.getContacto())
                 .email(request.getEmail())
                 .telefono(request.getTelefono())
+                .direccion(request.getDireccion())
                 .negocio(negocio)
                 .build();
 
@@ -70,6 +71,7 @@ public class ProveedorServiceImpl implements ProveedorService {
         proveedor.setContacto(request.getContacto());
         proveedor.setEmail(request.getEmail());
         proveedor.setTelefono(request.getTelefono());
+        proveedor.setDireccion(request.getDireccion());
 
         return mapToResponse(proveedorRepository.save(proveedor));
     }
@@ -122,6 +124,7 @@ public class ProveedorServiceImpl implements ProveedorService {
                 .contacto(p.getContacto())
                 .email(p.getEmail())
                 .telefono(p.getTelefono())
+                .direccion(p.getDireccion())
                 .negocioId(p.getNegocio().getId())
                 .negocioNombre(p.getNegocio().getNombre())
                 .build();
