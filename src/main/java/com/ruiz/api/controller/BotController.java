@@ -111,7 +111,7 @@ public class BotController {
 
     // ─── PUT /productos/{id} ──────────────────────────────────────────────────
     @PutMapping("/productos/{id}")
-    @Operation(summary = "Actualizar producto desde el bot", description = "No requiere JWT — usa X-Bot-Key.")
+    @Operation(summary = "Actualizar producto desde el bot (campos parciales)", description = "Solo actualiza los campos enviados. No requiere JWT — usa X-Bot-Key.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Producto actualizado correctamente"),
         @ApiResponse(responseCode = "403", description = "X-Bot-Key inválida o ausente"),
@@ -120,10 +120,28 @@ public class BotController {
     public ResponseEntity<ProductoResponse> actualizarProducto(
             @RequestHeader("X-Bot-Key") String botKey,
             @PathVariable Long id,
-            @RequestBody ProductoRequest request) {
+            @RequestBody ProductoRequest patch) {
 
         if (claveInvalida(botKey)) return ResponseEntity.status(403).build();
-        return ResponseEntity.ok(productoService.actualizar(id, request));
+
+        // 1. Obtener el producto existente
+        ProductoResponse existente = productoService.obtenerPorId(id);
+
+        // 2. Construir el request completo mezclando existente + campos del bot
+        ProductoRequest completo = ProductoRequest.builder()
+                .nombre      (patch.getNombre()      != null ? patch.getNombre()      : existente.getNombre())
+                .descripcion (patch.getDescripcion() != null ? patch.getDescripcion() : existente.getDescripcion())
+                .precio      (patch.getPrecio()      != null ? patch.getPrecio()      : existente.getPrecio() != null ? existente.getPrecio().doubleValue() : null)
+                .stock       (patch.getStock()       != null ? patch.getStock()       : existente.getStock())
+                .stockMinimo (patch.getStockMinimo() != null ? patch.getStockMinimo() : existente.getStockMinimo())
+                .sku         (patch.getSku()         != null ? patch.getSku()         : existente.getSku())
+                .imagenUrl   (patch.getImagenUrl()   != null ? patch.getImagenUrl()   : existente.getImagenUrl())
+                .categoriaId (patch.getCategoriaId() != null ? patch.getCategoriaId() : existente.getCategoriaId())
+                .negocioId   (existente.getNegocioId())  // siempre del existente
+                .build();
+
+        // 3. Actualizar con el objeto completo
+        return ResponseEntity.ok(productoService.actualizar(id, completo));
     }
 
     // ─── DELETE /productos/{id} ───────────────────────────────────────────────
@@ -160,7 +178,7 @@ public class BotController {
 
     // ─── PUT /proveedores/{id} ────────────────────────────────────────────────
     @PutMapping("/proveedores/{id}")
-    @Operation(summary = "Actualizar proveedor desde el bot", description = "No requiere JWT — usa X-Bot-Key.")
+    @Operation(summary = "Actualizar proveedor desde el bot (campos parciales)", description = "Solo actualiza los campos enviados. No requiere JWT — usa X-Bot-Key.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Proveedor actualizado correctamente"),
         @ApiResponse(responseCode = "403", description = "X-Bot-Key inválida o ausente"),
@@ -169,10 +187,25 @@ public class BotController {
     public ResponseEntity<ProveedorResponse> actualizarProveedor(
             @RequestHeader("X-Bot-Key") String botKey,
             @PathVariable Long id,
-            @RequestBody ProveedorRequest request) {
+            @RequestBody ProveedorRequest patch) {
 
         if (claveInvalida(botKey)) return ResponseEntity.status(403).build();
-        return ResponseEntity.ok(proveedorService.actualizar(id, request));
+
+        // 1. Obtener el proveedor existente
+        ProveedorResponse existente = proveedorService.obtenerPorId(id);
+
+        // 2. Construir el request completo mezclando existente + campos del bot
+        ProveedorRequest completo = ProveedorRequest.builder()
+                .nombre    (patch.getNombre()    != null ? patch.getNombre()    : existente.getNombre())
+                .contacto  (patch.getContacto()  != null ? patch.getContacto()  : existente.getContacto())
+                .email     (patch.getEmail()     != null ? patch.getEmail()     : existente.getEmail())
+                .telefono  (patch.getTelefono()  != null ? patch.getTelefono()  : existente.getTelefono())
+                .direccion (patch.getDireccion() != null ? patch.getDireccion() : existente.getDireccion())
+                .negocioId (existente.getNegocioId())  // siempre del existente
+                .build();
+
+        // 3. Actualizar con el objeto completo
+        return ResponseEntity.ok(proveedorService.actualizar(id, completo));
     }
 
     // ─── DELETE /proveedores/{id} ─────────────────────────────────────────────
