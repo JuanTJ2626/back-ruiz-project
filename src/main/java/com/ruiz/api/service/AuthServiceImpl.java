@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -70,30 +69,50 @@ public class AuthServiceImpl implements AuthService {
                     .build();
         }
 
-        // Si viene negocioId → es un EMPLEADO creado por un ADMIN
-        // Si no viene         → es un registro público (nuevo ADMIN con negocio propio)
-        boolean esEmpleado = request.getNegocioId() != null;
+        // ¿Es una creación desde el panel admin? (viene con negocioId)
+        boolean esCreacionPorAdmin = request.getNegocioId() != null;
+
+        // ¿Ya existe un SUPER_ADMIN en el sistema?
+        boolean yaTieneSuperAdmin = usuarioRepository.existsByRol(Usuario.Rol.SUPER_ADMIN);
+
+        // Determinar el rol a asignar
+        Usuario.Rol rolAsignado;
+        if (esCreacionPorAdmin) {
+            // Desde el panel admin — no se puede crear otro SUPER_ADMIN
+            if (request.getRol() == Usuario.Rol.SUPER_ADMIN) {
+                throw new IllegalArgumentException(
+                    "No se puede crear otro SUPER_ADMIN. Ya existe uno en el sistema."
+                );
+            }
+            rolAsignado = request.getRol() != null ? request.getRol() : Usuario.Rol.EMPLEADO;
+        } else if (!yaTieneSuperAdmin) {
+            // Primer registro del sistema → SUPER_ADMIN
+            rolAsignado = Usuario.Rol.SUPER_ADMIN;
+        } else {
+            // Registro público posterior → ADMIN normal
+            rolAsignado = Usuario.Rol.ADMIN;
+        }
 
         Usuario nuevoUsuario = Usuario.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
                 .nombre(request.getNombre())
-                .rol(esEmpleado
-                        ? (request.getRol() != null ? request.getRol() : Usuario.Rol.EMPLEADO)
-                        : Usuario.Rol.ADMIN)
+                .rol(rolAsignado)
                 .activo(true)
                 .build();
 
         usuarioRepository.save(nuevoUsuario);
 
         Negocio negocio;
-        if (esEmpleado) {
+        if (esCreacionPorAdmin) {
             // Asociar al negocio existente
             negocio = negocioRepository.findById(request.getNegocioId())
-                    .orElseThrow(() -> new RuntimeException("Negocio no encontrado con id: " + request.getNegocioId()));
+                    .orElseThrow(() -> new RuntimeException(
+                        "Negocio no encontrado con id: " + request.getNegocioId()
+                    ));
         } else {
-            // Crear negocio por defecto para el nuevo ADMIN
+            // Crear negocio por defecto para el nuevo usuario
             negocio = Negocio.builder()
                     .nombre("Mi Negocio")
                     .usuario(nuevoUsuario)
@@ -116,7 +135,7 @@ public class AuthServiceImpl implements AuthService {
 
         return AuthResponse.builder()
                 .success(true)
-                .message(esEmpleado ? "Empleado creado exitosamente" : "Usuario registrado exitosamente")
+                .message(esCreacionPorAdmin ? "Usuario creado exitosamente" : "Usuario registrado exitosamente")
                 .id(nuevoUsuario.getId())
                 .username(nuevoUsuario.getUsername())
                 .token(jwtToken)

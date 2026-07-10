@@ -78,6 +78,17 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioResponse cambiarRol(Long id, Rol nuevoRol) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+
+        // El rol del SUPER_ADMIN no puede ser cambiado
+        if (usuario.getRol() == Usuario.Rol.SUPER_ADMIN) {
+            throw new IllegalArgumentException("No se puede cambiar el rol del SUPER_ADMIN.");
+        }
+
+        // Nadie puede ser promovido a SUPER_ADMIN desde el panel
+        if (nuevoRol == Usuario.Rol.SUPER_ADMIN) {
+            throw new IllegalArgumentException("No se puede asignar el rol SUPER_ADMIN. Solo puede haber uno y se asigna en el registro inicial.");
+        }
+
         usuario.setRol(nuevoRol);
         return mapToResponse(usuarioRepository.save(usuario));
     }
@@ -96,6 +107,22 @@ public class UsuarioServiceImpl implements UsuarioService {
     public void eliminar(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+
+        // SUPER_ADMIN nunca puede ser eliminado por nadie
+        if (usuario.getRol() == Usuario.Rol.SUPER_ADMIN) {
+            throw new IllegalArgumentException(
+                "La cuenta SUPER_ADMIN no puede ser eliminada."
+            );
+        }
+
+        // Protección: el dueño de un negocio no puede ser eliminado
+        boolean esDuenoDeNegocio = !negocioRepository.findByUsuarioId(id).isEmpty();
+        if (esDuenoDeNegocio) {
+            throw new IllegalArgumentException(
+                "No se puede eliminar al usuario porque es dueño de un negocio. " +
+                "Transfiere la propiedad del negocio antes de eliminar esta cuenta."
+            );
+        }
 
         // 1. SET NULL en movimientos que referencian este usuario
         movimientoRepository.clearUsuarioId(id);

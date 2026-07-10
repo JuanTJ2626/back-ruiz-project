@@ -25,7 +25,7 @@ public class CategoriaController {
     private final CategoriaService categoriaService;
 
     @GetMapping("/negocio/{negocioId}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Listar categorías de un negocio")
     @ApiResponse(responseCode = "200", description = "Lista de categorías del negocio")
     public ResponseEntity<List<CategoriaDTO>> obtenerPorNegocio(
@@ -34,7 +34,7 @@ public class CategoriaController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Crear categoría", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Categoría creada"),
@@ -45,7 +45,7 @@ public class CategoriaController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Actualizar categoría", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Categoría actualizada"),
@@ -58,7 +58,7 @@ public class CategoriaController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Eliminar categoría", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Categoría eliminada"),

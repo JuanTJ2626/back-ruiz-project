@@ -26,7 +26,7 @@ public class NegocioController {
     private final NegocioService negocioService;
 
     @GetMapping("/usuario/{usuarioId}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Listar negocios de un usuario")
     @ApiResponse(responseCode = "200", description = "Lista de negocios del usuario")
     public ResponseEntity<List<NegocioResponse>> obtenerPorUsuario(
@@ -35,7 +35,7 @@ public class NegocioController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Obtener negocio por ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Negocio encontrado"),
@@ -47,7 +47,7 @@ public class NegocioController {
     }
 
     @PostMapping("/usuario/{usuarioId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Crear nuevo negocio", description = "Solo ADMIN puede crear negocios")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Negocio creado"),
@@ -60,7 +60,7 @@ public class NegocioController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Actualizar negocio", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Negocio actualizado"),
@@ -73,7 +73,7 @@ public class NegocioController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Eliminar negocio", description = "Solo ADMIN puede eliminar negocios")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Negocio eliminado"),

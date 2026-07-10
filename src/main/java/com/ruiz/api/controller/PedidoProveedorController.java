@@ -30,7 +30,7 @@ public class PedidoProveedorController {
     private final EmailService emailService;
 
     @GetMapping("/negocio/{negocioId}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Todos los pedidos del negocio")
     @ApiResponse(responseCode = "200", description = "Lista de pedidos")
     public ResponseEntity<List<PedidoProveedorResponse>> obtenerPorNegocio(
@@ -39,7 +39,7 @@ public class PedidoProveedorController {
     }
 
     @GetMapping("/negocio/{negocioId}/pendientes")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(
         summary = "Pedidos PENDIENTES del negocio",
         description = "Filtra solo los pedidos que aún no han sido recibidos ni cancelados"
@@ -51,7 +51,7 @@ public class PedidoProveedorController {
     }
 
     @GetMapping("/negocio/{negocioId}/estado/{estado}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(
         summary = "Pedidos por estado",
         description = "Estados posibles: PENDIENTE, ENVIADO, RECIBIDO, CANCELADO"
@@ -63,7 +63,7 @@ public class PedidoProveedorController {
     }
 
     @GetMapping("/proveedor/{proveedorId}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Pedidos de un proveedor específico")
     public ResponseEntity<List<PedidoProveedorResponse>> obtenerPorProveedor(
             @PathVariable Long proveedorId) {
@@ -71,7 +71,7 @@ public class PedidoProveedorController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Obtener pedido por ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Pedido encontrado"),
@@ -83,7 +83,7 @@ public class PedidoProveedorController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(
         summary = "Crear pedido a proveedor",
         description = "Solo ADMIN. Crea un nuevo pedido en estado PENDIENTE. " +
@@ -99,7 +99,7 @@ public class PedidoProveedorController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Actualizar datos del pedido", description = "Solo ADMIN. No se puede cambiar el proveedor ni el usuario creador.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Pedido actualizado"),
@@ -112,7 +112,7 @@ public class PedidoProveedorController {
     }
 
     @PatchMapping("/{id}/estado")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(
         summary = "Cambiar estado del pedido",
         description = "Solo ADMIN. Al cambiar a RECIBIDO, el stock del producto vinculado se incrementa automáticamente."
@@ -129,7 +129,7 @@ public class PedidoProveedorController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Eliminar pedido", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Pedido eliminado"),
@@ -141,7 +141,7 @@ public class PedidoProveedorController {
     }
 
     @PostMapping("/{id}/enviar-email")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(
         summary = "Enviar email de notificación al proveedor",
         description = "Solo ADMIN. Envía un email al proveedor con los detalles del pedido. " +

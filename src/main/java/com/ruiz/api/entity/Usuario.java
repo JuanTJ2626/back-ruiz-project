@@ -31,13 +31,13 @@ public class Usuario {
     private String nombre;
 
     public enum Rol {
-        ADMIN, EMPLEADO
+        SUPER_ADMIN, ADMIN, EMPLEADO
     }
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private Rol rol = Rol.ADMIN; // Default
+    private Rol rol = Rol.ADMIN;
 
     @Column(nullable = false)
     @Builder.Default

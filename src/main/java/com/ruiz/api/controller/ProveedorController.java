@@ -26,7 +26,7 @@ public class ProveedorController {
     private final ProveedorService proveedorService;
 
     @GetMapping("/negocio/{negocioId}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Listar proveedores por negocio")
     @ApiResponse(responseCode = "200", description = "Lista de proveedores del negocio")
     public ResponseEntity<List<ProveedorResponse>> obtenerPorNegocio(
@@ -35,7 +35,7 @@ public class ProveedorController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Obtener proveedor por ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Proveedor encontrado"),
@@ -47,7 +47,7 @@ public class ProveedorController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Crear proveedor", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Proveedor creado"),
@@ -58,7 +58,7 @@ public class ProveedorController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Actualizar proveedor", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Proveedor actualizado"),
@@ -71,7 +71,7 @@ public class ProveedorController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Eliminar proveedor", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Proveedor eliminado"),
@@ -84,7 +84,7 @@ public class ProveedorController {
     }
 
     @PostMapping("/{proveedorId}/producto/{productoId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Vincular proveedor con producto", description = "Solo ADMIN")
     @ApiResponse(responseCode = "200", description = "Vínculo creado")
     public ResponseEntity<ProveedorResponse> vincularProducto(
@@ -94,7 +94,7 @@ public class ProveedorController {
     }
 
     @DeleteMapping("/{proveedorId}/producto/{productoId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Desvincular proveedor de producto", description = "Solo ADMIN")
     @ApiResponse(responseCode = "200", description = "Vínculo eliminado")
     public ResponseEntity<ProveedorResponse> desvincularProducto(

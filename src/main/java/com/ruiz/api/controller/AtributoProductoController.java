@@ -25,7 +25,7 @@ public class AtributoProductoController {
     private final AtributoProductoService atributoService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(
         summary = "Listar atributos de un producto",
         description = "Devuelve todos los atributos personalizados del producto (ej: Color=Rojo, Talla=M)"
@@ -37,7 +37,7 @@ public class AtributoProductoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(
         summary = "Agregar o actualizar un atributo",
         description = "Solo ADMIN. Si la clave ya existe para ese producto, actualiza el valor."
@@ -53,7 +53,7 @@ public class AtributoProductoController {
     }
 
     @PostMapping("/lote")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(
         summary = "Guardar varios atributos a la vez",
         description = "Solo ADMIN. Útil para enviar todos los atributos al crear un producto."
@@ -66,7 +66,7 @@ public class AtributoProductoController {
     }
 
     @DeleteMapping("/{atributoId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Eliminar un atributo", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Atributo eliminado"),
@@ -80,7 +80,7 @@ public class AtributoProductoController {
     }
 
     @DeleteMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Eliminar todos los atributos del producto", description = "Solo ADMIN")
     @ApiResponse(responseCode = "204", description = "Todos los atributos eliminados")
     public ResponseEntity<Void> eliminarTodos(

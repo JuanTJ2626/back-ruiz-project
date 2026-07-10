@@ -27,7 +27,7 @@ public class MovimientoController {
 
     // EMPLEADO y ADMIN pueden registrar movimientos (su función principal)
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(
         summary = "Registrar movimiento",
         description = "ADMIN y EMPLEADO pueden registrar movimientos. " +
@@ -43,7 +43,7 @@ public class MovimientoController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Obtener movimiento por ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Movimiento encontrado"),
@@ -55,7 +55,7 @@ public class MovimientoController {
     }
 
     @GetMapping("/producto/{productoId}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Historial de movimientos de un producto")
     @ApiResponse(responseCode = "200", description = "Historial obtenido correctamente")
     public ResponseEntity<List<MovimientoResponse>> obtenerPorProducto(
@@ -64,7 +64,7 @@ public class MovimientoController {
     }
 
     @GetMapping("/negocio/{negocioId}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Últimos movimientos de un negocio")
     @ApiResponse(responseCode = "200", description = "Movimientos obtenidos correctamente")
     public ResponseEntity<List<MovimientoResponse>> obtenerUltimosPorNegocio(

@@ -30,7 +30,7 @@ public class ProductoController {
     // ── Lecturas: ADMIN y EMPLEADO ────────────────────────────────────────────
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Listar todos los productos")
     @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente")
     public ResponseEntity<List<ProductoResponse>> obtenerTodos() {
@@ -38,7 +38,7 @@ public class ProductoController {
     }
 
     @GetMapping("/negocio/{negocioId}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Listar productos por negocio")
     @ApiResponse(responseCode = "200", description = "Lista de productos del negocio")
     public ResponseEntity<List<ProductoResponse>> obtenerPorNegocio(
@@ -47,7 +47,7 @@ public class ProductoController {
     }
 
     @GetMapping("/bajo-stock/{negocioId}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Productos con stock crítico")
     @ApiResponse(responseCode = "200", description = "Lista de productos con stock bajo")
     public ResponseEntity<List<ProductoResponse>> obtenerBajoStock(
@@ -56,7 +56,7 @@ public class ProductoController {
     }
 
     @GetMapping("/categoria/{categoriaId}/negocio/{negocioId}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Productos por categoría")
     public ResponseEntity<List<ProductoResponse>> obtenerPorCategoria(
             @PathVariable Long categoriaId,
@@ -65,7 +65,7 @@ public class ProductoController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Obtener producto por ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Producto encontrado"),
@@ -77,7 +77,7 @@ public class ProductoController {
     }
 
     @GetMapping("/buscar")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Buscar productos por nombre")
     @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
     public ResponseEntity<List<ProductoResponse>> buscarPorNombre(
@@ -86,7 +86,7 @@ public class ProductoController {
     }
 
     @GetMapping("/buscar/negocio/{negocioId}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Buscar productos por nombre en negocio")
     public ResponseEntity<List<ProductoResponse>> buscarPorNombreEnNegocio(
             @RequestParam String nombre,
@@ -117,7 +117,7 @@ public class ProductoController {
     // ── Escritura: solo ADMIN ─────────────────────────────────────────────────
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Crear nuevo producto", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Producto creado exitosamente"),
@@ -128,7 +128,7 @@ public class ProductoController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Actualizar producto", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Producto actualizado exitosamente"),
@@ -142,7 +142,7 @@ public class ProductoController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(summary = "Eliminar producto", description = "Solo ADMIN")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Producto eliminado exitosamente"),

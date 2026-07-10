@@ -26,16 +26,16 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Listar todos los usuarios", description = "Solo ADMIN")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    @Operation(summary = "Listar todos los usuarios", description = "ADMIN y SUPER_ADMIN")
     @ApiResponse(responseCode = "200", description = "Lista completa de usuarios")
     public ResponseEntity<List<UsuarioResponse>> obtenerTodos() {
         return ResponseEntity.ok(usuarioService.obtenerTodos());
     }
 
     @GetMapping("/negocio/{negocioId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Listar usuarios del negocio", description = "Solo ADMIN")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    @Operation(summary = "Listar usuarios del negocio", description = "ADMIN y SUPER_ADMIN")
     @ApiResponse(responseCode = "200", description = "Lista de usuarios")
     public ResponseEntity<List<UsuarioResponse>> obtenerPorNegocio(
             @Parameter(description = "ID del negocio") @PathVariable Long negocioId) {
@@ -43,7 +43,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(summary = "Obtener usuario por ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
@@ -55,10 +55,10 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLEADO','SUPER_ADMIN')")
     @Operation(
         summary = "Actualizar nombre, email o contraseña",
-        description = "ADMIN puede editar cualquier usuario. EMPLEADO solo puede editarse a sí mismo."
+        description = "SUPER_ADMIN y ADMIN pueden editar cualquier usuario. EMPLEADO solo puede editarse a sí mismo."
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Usuario actualizado"),
@@ -71,26 +71,26 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}/rol")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(
         summary = "Cambiar rol de un usuario",
-        description = "Solo ADMIN. Valores: ADMIN o EMPLEADO"
+        description = "ADMIN: EMPLEADO↔ADMIN. SUPER_ADMIN: puede asignar cualquier rol."
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Rol actualizado"),
-        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede cambiar roles")
+        @ApiResponse(responseCode = "400", description = "No se puede cambiar el rol del SUPER_ADMIN")
     })
     public ResponseEntity<UsuarioResponse> cambiarRol(
             @Parameter(description = "ID del usuario") @PathVariable Long id,
-            @Parameter(description = "Nuevo rol: ADMIN o EMPLEADO") @RequestParam Rol rol) {
+            @Parameter(description = "Nuevo rol: SUPER_ADMIN, ADMIN o EMPLEADO") @RequestParam Rol rol) {
         return ResponseEntity.ok(usuarioService.cambiarRol(id, rol));
     }
 
     @PutMapping("/{id}/estado")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(
         summary = "Activar o desactivar usuario",
-        description = "Solo ADMIN. Útil para suspender acceso sin eliminar el usuario."
+        description = "ADMIN y SUPER_ADMIN. Suspende el acceso sin eliminar la cuenta."
     )
     @ApiResponse(responseCode = "200", description = "Estado actualizado")
     public ResponseEntity<UsuarioResponse> cambiarEstado(
@@ -100,11 +100,14 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Eliminar usuario", description = "Solo ADMIN")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    @Operation(
+        summary = "Eliminar usuario",
+        description = "ADMIN elimina EMPLEADOs. SUPER_ADMIN elimina cualquier cuenta excepto la suya propia."
+    )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Usuario eliminado"),
-        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede eliminar usuarios")
+        @ApiResponse(responseCode = "400", description = "No se puede eliminar al SUPER_ADMIN")
     })
     public ResponseEntity<Void> eliminar(
             @Parameter(description = "ID del usuario") @PathVariable Long id) {
@@ -113,16 +116,12 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}/negocio")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(
         summary = "Asignar negocio a un usuario",
-        description = "Solo ADMIN. Permite asignar o cambiar el negocio al que pertenece un empleado."
+        description = "ADMIN y SUPER_ADMIN. Asigna o cambia el negocio de un empleado."
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Negocio asignado correctamente"),
-        @ApiResponse(responseCode = "404", description = "Usuario o negocio no encontrado"),
-        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede asignar negocios")
-    })
+    @ApiResponse(responseCode = "200", description = "Negocio asignado correctamente")
     public ResponseEntity<UsuarioResponse> asignarNegocio(
             @Parameter(description = "ID del usuario") @PathVariable Long id,
             @Parameter(description = "ID del negocio a asignar") @RequestParam Long negocioId) {
@@ -130,16 +129,12 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}/negocio")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Operation(
         summary = "Quitar negocio de un usuario",
-        description = "Solo ADMIN. Deja al usuario sin negocio asignado."
+        description = "ADMIN y SUPER_ADMIN. Deja al usuario sin negocio asignado."
     )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Negocio quitado correctamente"),
-        @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
-        @ApiResponse(responseCode = "403", description = "Solo ADMIN puede quitar negocios")
-    })
+    @ApiResponse(responseCode = "200", description = "Negocio quitado correctamente")
     public ResponseEntity<UsuarioResponse> quitarNegocio(
             @Parameter(description = "ID del usuario") @PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.quitarNegocio(id));
