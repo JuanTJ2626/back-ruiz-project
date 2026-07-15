@@ -62,11 +62,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse register(RegisterRequest request) {
+        // Validar username duplicado
         if (usuarioRepository.existsByUsername(request.getUsername())) {
-            return AuthResponse.builder()
-                    .success(false)
-                    .message("El usuario ya existe")
-                    .build();
+            throw new IllegalArgumentException("El nombre de usuario '" + request.getUsername() + "' ya está en uso.");
+        }
+
+        // Validar email duplicado
+        if (request.getEmail() != null && usuarioRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("El correo '" + request.getEmail() + "' ya está registrado.");
         }
 
         // ¿Es una creación desde el panel admin? (viene con negocioId)

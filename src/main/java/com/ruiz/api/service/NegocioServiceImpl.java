@@ -5,7 +5,9 @@ import com.ruiz.api.dto.NegocioResponse;
 import com.ruiz.api.entity.Negocio;
 import com.ruiz.api.entity.Usuario;
 import com.ruiz.api.exception.ResourceNotFoundException;
+import com.ruiz.api.repository.CategoriaRepository;
 import com.ruiz.api.repository.NegocioRepository;
+import com.ruiz.api.repository.ProductoRepository;
 import com.ruiz.api.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ public class NegocioServiceImpl implements NegocioService {
 
     private final NegocioRepository negocioRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -72,6 +76,34 @@ public class NegocioServiceImpl implements NegocioService {
     public void eliminar(Long id) {
         Negocio negocio = negocioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Negocio", "id", id));
+
+        // No se puede eliminar un negocio que tiene productos registrados
+        long totalProductos = productoRepository.countByNegocioId(id);
+        if (totalProductos > 0) {
+            throw new IllegalArgumentException(
+                "No se puede eliminar el negocio '" + negocio.getNombre() + "' porque tiene " +
+                totalProductos + " producto(s) registrado(s). Elimina o reasigna los productos primero."
+            );
+        }
+
+        // No se puede eliminar un negocio que tiene categorías
+        long totalCategorias = categoriaRepository.countByNegocioId(id);
+        if (totalCategorias > 0) {
+            throw new IllegalArgumentException(
+                "No se puede eliminar el negocio '" + negocio.getNombre() + "' porque tiene " +
+                totalCategorias + " categoría(s) registrada(s). Elimina las categorías primero."
+            );
+        }
+
+        // No se puede eliminar un negocio que tiene usuarios asignados
+        long totalUsuarios = usuarioRepository.findByNegocioId(id).size();
+        if (totalUsuarios > 0) {
+            throw new IllegalArgumentException(
+                "No se puede eliminar el negocio '" + negocio.getNombre() + "' porque tiene " +
+                totalUsuarios + " usuario(s) asignado(s). Desvincula los usuarios primero."
+            );
+        }
+
         negocioRepository.delete(negocio);
     }
 

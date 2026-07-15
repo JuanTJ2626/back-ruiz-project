@@ -155,6 +155,16 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     // -------------------------------------------------------
     private UsuarioResponse mapToResponse(Usuario u) {
+        Long negocioId = null;
+        String negocioNombre = null;
+        try {
+            if (u.getNegocio() != null) {
+                negocioId = u.getNegocio().getId();
+                negocioNombre = u.getNegocio().getNombre();
+            }
+        } catch (Exception ignored) {
+            // LazyInitializationException si se llama fuera de transacción — se ignora
+        }
         return UsuarioResponse.builder()
                 .id(u.getId())
                 .username(u.getUsername())
@@ -162,8 +172,8 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .nombre(u.getNombre())
                 .rol(u.getRol())
                 .activo(u.getActivo())
-                .negocioId(u.getNegocio() != null ? u.getNegocio().getId() : null)
-                .negocioNombre(u.getNegocio() != null ? u.getNegocio().getNombre() : null)
+                .negocioId(negocioId)
+                .negocioNombre(negocioNombre)
                 .build();
     }
 }

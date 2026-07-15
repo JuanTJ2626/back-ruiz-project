@@ -23,22 +23,12 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Iniciar sesión", description = "Valida las credenciales del usuario")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        AuthResponse response = authService.login(request);
-        if (response.isSuccess()) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/register")
     @Operation(summary = "Registrar usuario", description = "Crea un nuevo usuario en el sistema")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        AuthResponse response = authService.register(request);
-        if (response.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }
 }

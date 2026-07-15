@@ -16,9 +16,11 @@ public class RegisterRequest {
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
 
+    @NotBlank(message = "El email es obligatorio")
     @Email(message = "Formato de email inválido")
     private String email;
 
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
     // Opcional — si se manda, el ADMIN puede crear empleados directamente
